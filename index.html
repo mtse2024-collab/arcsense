@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ArcSense</title>
+  <meta name="description" content="ArcSense is a two-sensor back wearable that tells a safe hip hinge from a rounded back and gives a short buzz past a clinician-set limit. Interactive simulation, research prototype.">
+  <meta name="theme-color" content="#F2F5F5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0B1316" media="(prefers-color-scheme: dark)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+<!--
+  ArcSense showcase site. Everything on this page is SIMULATED: there is no
+  real sensor data. Files:
+    index.html   page structure and copy (edit text here)
+    styles.css   colors, type, layout (tokens at the top)
+    app.js       simulator, live chart, flow diagram, scroll motion
+    hardware.js  exploded view + hero render (loads files from assets/hardware)
+-->
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="wordmark" href="#top" aria-label="ArcSense, back to top">
+      <span translate="no">ArcSense</span>
+    </a>
+    <nav aria-label="Sections">
+      <ul class="nav-links">
+        <li><a href="#simulator"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9.5" cy="3" r="1.6"/><path d="M8.5 5 C 6 6, 4.5 8, 4.5 10.5 M4.5 10.5 V15 M8.5 5 L12 8.5"/></svg><span>Simulator</span></a></li>
+        <li><a href="#data"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 14.5h13M2.5 11l3.5-4 3 2.5 4.5-6"/></svg><span>Data</span></a></li>
+        <li><a href="#inside"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 1.5 14.5 5 8 8.5 1.5 5z M1.5 8 8 11.5 14.5 8 M1.5 11 8 14.5 14.5 11"/></svg><span>Inside</span></a></li>
+        <li><a href="#flow"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="1.5" y="6" width="3.5" height="4"/><rect x="11" y="6" width="3.5" height="4"/><path d="M5 8h6M9 6l2 2-2 2"/></svg><span>System</span></a></li>
+        <li><a href="#compare"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 14.5V7M6 14.5V3M10 14.5V9M14 14.5V5"/></svg><span>Compare</span></a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- 1. HERO ============================================================ -->
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <div class="wrap hero-grid">
+    <div class="hero-copy" data-enter>
+      <p class="eyebrow">Research prototype · FAU Wave 2026–27</p>
+      <h1 id="hero-title"><span translate="no">ArcSense</span></h1>
+      <p class="lede">A two-sensor back wearable that tells a safe hip hinge from a rounded back, and gives a short buzz before a risky bend.</p>
+      <p class="fact">Sensors sit at <strong>T12</strong> and <strong>S2</strong>, the placement tested against lab motion capture at about <strong>1.8°</strong> average error in forward bending.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#simulator">See how it works
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3.5 8.5 8 13l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero render slot. hardware.js fills it with assets/hardware/hero.webp
+         (or frame_000.webp from the image sequence) when the file exists. -->
+    <figure class="hero-visual" data-enter>
+      <div class="render-slot" id="hero-slot" data-state="empty">
+        <img id="hero-img" width="1600" height="2000" fetchpriority="high" alt="ArcSense worn on the back: a small sensor pod at T12 and the hub at S2, joined by a thin flex strip" hidden>
+        <!-- Turntable: hardware.js spins assets/hardware/hero.glb here once it loads (the image stays as the fallback) -->
+        <canvas id="hero-canvas" role="img" aria-label="Rendered ArcSense device slowly turning 360 degrees: the upper pod at T12 and the hub at S2, joined by a thin flex cable. Drag to turn it." hidden></canvas>
+        <div class="slot-empty" id="hero-empty">
+          <svg class="placement" viewBox="0 0 220 360" role="img" aria-label="Placement diagram: a column of vertebrae with the upper pod position at T12 and the hub position at S2">
+            <g class="vert" fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="94" y="18" width="32" height="16" rx="2"/>
+              <rect x="94" y="40" width="32" height="16" rx="2"/>
+              <rect x="94" y="62" width="32" height="16" rx="2"/>
+              <rect x="93" y="84" width="34" height="17" rx="2"/>
+              <rect x="93" y="107" width="34" height="17" rx="2"/>
+              <rect x="92" y="130" width="36" height="18" rx="2"/>
+              <rect x="91" y="154" width="38" height="19" rx="2"/>
+              <rect x="90" y="179" width="40" height="20" rx="2"/>
+              <rect x="89" y="205" width="42" height="21" rx="2"/>
+              <rect x="88" y="232" width="44" height="22" rx="2"/>
+              <path d="M90 262 Q110 252 130 262 L124 318 Q110 334 96 318 Z"/>
+            </g>
+            <g class="pod-mark">
+              <rect x="78" y="124" width="64" height="30" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="4 4"/>
+              <rect x="72" y="270" width="76" height="40" rx="2" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="4 4"/>
+              <line x1="110" y1="154" x2="110" y2="270" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="2 5"/>
+            </g>
+            <g class="mono-label" font-size="11">
+              <text x="150" y="143">T12</text>
+              <text x="156" y="294">S2</text>
+            </g>
+          </svg>
+          <p class="slot-note"><span class="slot-tag">Render pending</span> Drop <code>hero.webp</code> into <code>assets/hardware/</code></p>
+        </div>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<!-- 2. SIMULATOR ======================================================== -->
+<section class="sim" id="simulator" aria-labelledby="sim-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Interactive simulation</p>
+      <h2 id="sim-title">Bend forward and watch what each sensor sees</h2>
+      <p class="section-lede">Drag the figure or the lean slider. Leaning from the hips moves both sensors together. Rounding the lower back tilts the upper sensor much more than the lower one, and that difference is the lumbar bend.</p>
+    </div>
+
+    <div class="sim-grid">
+      <div class="sim-stage">
+        <div class="sim-toolbar">
+          <div class="seg" role="radiogroup" aria-label="Movement pattern">
+            <button type="button" role="radio" aria-checked="true" data-mode="hinge" id="mode-hinge">Hip hinge</button>
+            <button type="button" role="radio" aria-checked="false" data-mode="round" id="mode-round">Rounded back</button>
+          </div>
+          <button type="button" class="btn btn-quiet" id="demo-toggle" aria-pressed="false">
+            <svg class="i-play" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 2.2v9.6L11.5 7z" fill="currentColor"/></svg>
+            <svg class="i-pause" width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M3.5 2.5h2.4v9H3.5zM8.1 2.5h2.4v9H8.1z" fill="currentColor"/></svg>
+            <span>Play demo motion</span>
+          </button>
+        </div>
+
+        <svg id="figure" class="figure" viewBox="0 0 440 400" role="img" aria-labelledby="figure-desc">
+          <desc id="figure-desc">Side view of a person bending forward. Two sensors on the back report their tilt.</desc>
+          <ellipse class="shadow" cx="186" cy="384" rx="46" ry="5"/>
+          <g id="fig-body"></g>
+          <g id="fig-sensors"></g>
+          <g id="fig-buzz" aria-hidden="true"></g>
+        </svg>
+        <p class="drag-hint" aria-hidden="true">Drag the upper body to lean</p>
+
+        <div class="controls">
+          <div class="control">
+            <div class="control-row"><label for="lean">Forward lean</label><output for="lean" id="lean-out">0°</output></div>
+            <input type="range" id="lean" min="0" max="80" step="1" value="0" aria-describedby="lean-help">
+            <p class="help" id="lean-help">Upper-sensor tilt from upright. Arrow keys move 1°, Page Up/Down 10°.</p>
+          </div>
+          <div class="control">
+            <div class="control-row"><label for="limit">Clinician-set limit</label><output for="limit" id="limit-out">30°</output></div>
+            <input type="range" id="limit" min="10" max="60" step="1" value="30" aria-describedby="limit-help">
+            <p class="help" id="limit-help">Set by the patient's clinician in the app. The device never decides what's safe on its own.</p>
+          </div>
+        </div>
+      </div>
+
+      <aside class="readout" aria-label="Live sensor readings">
+        <div class="read-pair">
+          <div class="read"><span class="read-label">Upper sensor · T12</span><span class="read-val" id="r-upper">0°</span></div>
+          <div class="read"><span class="read-label">Lower sensor · S2</span><span class="read-val" id="r-lower">0°</span></div>
+        </div>
+        <div class="read read-main">
+          <span class="read-label">Lumbar bend</span>
+          <span class="read-big" id="r-bend">0°</span>
+          <span class="formula" id="r-formula">0° − 0° = 0°</span>
+        </div>
+        <div class="state-chip" id="state-chip" data-over="false" role="status" aria-live="polite">
+          <svg class="i-ok" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5 6.5 11.5 12.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <svg class="i-buzz" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M2 5v6M5 3v10M8 6v4M11 3v10M14 5v6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span id="state-text">Under limit · no cue</span>
+        </div>
+        <div class="log">
+          <div class="log-head"><h3>Event log</h3><button type="button" class="link-btn" id="log-clear">Clear</button></div>
+          <ol id="log-list" class="log-list" aria-live="polite" aria-relevant="additions"></ol>
+          <p class="log-empty" id="log-empty">No events yet. Switch to rounded back and lean past the limit.</p>
+        </div>
+      </aside>
+    </div>
+
+    <details class="evidence">
+      <summary>Why T12 and S2?</summary>
+      <p>Mjøsund et al. (2017) placed two motion sensors at T12 and S2 on 34 people, 18 of them with low back pain, and compared them with lab motion capture. Average error was about 1.8° for forward bending and under 1° for backward and side bending. Rotation was not tested, and the study used single-plane movements at a comfortable speed, so twisting and fast sport movements still need their own validation. ArcSense will report its own error against motion capture or a digital inclinometer.</p>
+      <p><a href="https://link.springer.com/10.1186/s12891-017-1489-1" target="_blank" rel="noopener">Read the study (BMC Musculoskeletal Disorders)</a></p>
+    </details>
+  </div>
+</section>
+
+<!-- 3. LIVE DATA ======================================================== -->
+<section class="data" id="data" aria-labelledby="data-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Live data · simulated</p>
+      <h2 id="data-title">What the app records</h2>
+      <p class="section-lede">The same bend value drives this chart. Every crossing of the limit becomes an event the clinician can review in the daily summary.</p>
+    </div>
+
+    <div class="data-grid">
+      <figure class="chart-card">
+        <div class="chart-head">
+          <h3>Lumbar bend, last 30 seconds</h3>
+          <div class="legend" aria-hidden="true">
+            <span><i class="k-line"></i>Bend</span>
+            <span><i class="k-limit"></i>Limit</span>
+            <span><i class="k-over"></i>Over limit</span>
+          </div>
+        </div>
+        <div class="chart-wrap" id="chart-wrap">
+          <canvas id="chart" role="img" aria-label="Line chart of lumbar bend in degrees over the last 30 seconds, with the clinician-set limit as a dashed line"></canvas>
+          <div class="tip" id="chart-tip" hidden></div>
+        </div>
+        <details class="table-view">
+          <summary>Show as table</summary>
+          <div class="table-scroll"><table id="chart-table"><caption class="sr-only">Lumbar bend samples, one per second</caption><thead><tr><th scope="col">Seconds ago</th><th scope="col">Bend</th><th scope="col">Over limit</th></tr></thead><tbody></tbody></table></div>
+        </details>
+      </figure>
+
+      <div class="summary-card">
+        <div class="summary-head">
+          <h3>Daily summary</h3>
+          <span class="sim-tag">This simulation</span>
+        </div>
+        <dl class="stats">
+          <div><dt>Buzz events</dt><dd id="s-events">0</dd></div>
+          <div><dt>Time over limit</dt><dd id="s-over">0 s</dd></div>
+          <div><dt>Peak bend</dt><dd id="s-peak">0°</dd></div>
+          <div><dt>Limit</dt><dd id="s-limit">30°</dd></div>
+        </dl>
+        <div class="hour-strip">
+          <p class="strip-label">Events per minute, first 10 minutes of this session</p>
+          <div class="strip" id="strip" role="img" aria-label="Buzz events per minute of this session"></div>
+        </div>
+        <p class="summary-note">A real day comes from wear testing: wear time and battery life are [PLACEHOLDER] until the prototype is tested.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. EXPLODED VIEW ==================================================== -->
+<section class="inside" id="inside" aria-labelledby="inside-title">
+  <div class="inside-pin" id="inside-pin">
+    <div class="wrap inside-grid">
+      <div class="inside-copy">
+        <p class="eyebrow">Inside the hub</p>
+        <h2 id="inside-title">Five layers over the sacrum</h2>
+        <p class="section-lede">Scroll to open the hub, or pick a layer. The upper pod is the same stack without the battery, Bluetooth or motor.</p>
+        <ol class="layers" id="layers">
+          <li><button type="button" data-layer="0" aria-pressed="false"><span class="ln">Top shell</span><span class="ld">Soft-touch shell with a status light and one button.</span></button></li>
+          <li><button type="button" data-layer="1" aria-pressed="false"><span class="ln">Main board</span><span class="ld">XIAO ESP32-S3 with Bluetooth LE, a BNO055 motion sensor and a DRV2605L haptic driver.</span></button></li>
+          <li><button type="button" data-layer="2" aria-pressed="false"><span class="ln">Battery</span><span class="ld">3.7 V rechargeable LiPo.</span></button></li>
+          <li><button type="button" data-layer="3" aria-pressed="false"><span class="ln">Vibration motor</span><span class="ld">Coin motor for the short buzz cue.</span></button></li>
+          <li><button type="button" data-layer="4" aria-pressed="false"><span class="ln">Base + skin patch</span><span class="ld">Replaceable adhesive patch. A strap is the backup for sweat and sport.</span></button></li>
+        </ol>
+        <dl class="specs">
+          <div><dt>Hub target</dt><dd>50 × 34 × 10 mm</dd></div>
+          <div><dt>Upper pod target</dt><dd>36 × 26 × 8 mm</dd></div>
+          <div><dt>Battery life</dt><dd>[PLACEHOLDER]</dd></div>
+        </dl>
+      </div>
+
+      <!-- Hardware stage. hardware.js picks one source:
+           1. assets/hardware/hub.glb          -> Three.js, meshes move apart
+           2. assets/hardware/frame_000.webp…  -> canvas image sequence
+           3. neither                          -> labeled placeholder below -->
+      <div class="stage" id="stage" data-source="none">
+        <canvas id="stage-canvas" hidden></canvas>
+        <div class="stage-labels" id="stage-labels" aria-hidden="true"></div>
+        <div class="stage-empty" id="stage-empty">
+          <div class="stage-empty-inner">
+            <span class="slot-tag">Hardware render slot</span>
+            <p>The exploded view plays here from the real CAD assembly.</p>
+            <p class="files">Add <code>assets/hardware/hub.glb</code><br>or <code>frame_000.webp</code> … <code>frame_149.webp</code></p>
+          </div>
+          <div class="stage-progress" aria-hidden="true"><span id="stage-bar"></span></div>
+        </div>
+        <p class="stage-status" id="stage-status" role="status"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. SYSTEM FLOW ====================================================== -->
+<section class="flow" id="flow" aria-labelledby="flow-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">System</p>
+      <h2 id="flow-title">From two angles to one short buzz</h2>
+      <p class="section-lede">Each step runs on the hub, so the cue does not wait for the phone. The values below are live from the simulator.</p>
+    </div>
+
+    <figure class="flow-fig">
+      <ol class="steps" id="steps">
+        <li class="flow-track" aria-hidden="true"><span class="flow-trace" id="flow-trace"></span></li>
+        <li class="step" data-step="0">
+          <span class="step-n">1</span>
+          <h3>Sense</h3>
+          <p>The T12 pod and the hub each report their tilt over one shared wire bus.</p>
+          <p class="live" id="f-sense">upper 0° · lower 0°</p>
+          <span class="edge" aria-hidden="true">2 angles</span>
+        </li>
+        <li class="step" data-step="1">
+          <span class="step-n">2</span>
+          <h3>Compare</h3>
+          <p>Lumbar bend = upper − lower. A hip hinge barely changes it.</p>
+          <p class="live" id="f-compare">bend 0°</p>
+          <span class="edge" aria-hidden="true">bend</span>
+        </li>
+        <li class="step" data-step="2">
+          <span class="step-n">3</span>
+          <h3>Check</h3>
+          <p>The bend is compared with the limit the clinician set in the app.</p>
+          <p class="live" id="f-check">limit 30° · under</p>
+          <span class="edge" aria-hidden="true">over / under</span>
+        </li>
+        <li class="step" data-step="3">
+          <span class="step-n">4</span>
+          <h3>Cue + log</h3>
+          <p>The hub vibrates briefly and sends the event over Bluetooth LE for the daily summary.</p>
+          <p class="live" id="f-cue">0 events logged</p>
+        </li>
+      </ol>
+      <figcaption class="sr-only">Four steps: sense two tilt angles, compare them into a lumbar bend, check the bend against the clinician's limit, then buzz and log the event.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- 6. WHO IT'S FOR ===================================================== -->
+<section class="who" id="who" aria-labelledby="who-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">Who it's for</p>
+      <h2 id="who-title">Recovery between clinic visits</h2>
+    </div>
+    <div class="who-switch">
+      <div class="who-tabs" role="tablist" aria-label="Who ArcSense is for">
+        <button type="button" role="tab" id="tab-rehab" aria-controls="panel-rehab" aria-selected="true" data-who="rehab">
+          <span class="chip">Primary</span>
+          <span class="wt-title">Patients after spine surgery</span>
+          <span class="wt-sub">Rehab at home between visits</span>
+        </button>
+        <button type="button" role="tab" id="tab-athlete" aria-controls="panel-athlete" aria-selected="false" tabindex="-1" data-who="athlete">
+          <span class="chip chip-quiet">Next</span>
+          <span class="wt-title">Athletes returning to play</span>
+          <span class="wt-sub">Lifting and training after a back injury</span>
+        </button>
+        <button type="button" role="tab" id="tab-older" aria-controls="panel-older" aria-selected="false" tabindex="-1" data-who="older">
+          <span class="chip chip-quiet">Next</span>
+          <span class="wt-title">Older adults with back pain</span>
+          <span class="wt-sub">Everyday lifting and reaching</span>
+        </button>
+      </div>
+
+      <div class="who-stage">
+        <!-- Animated figure: same body model as the simulator, playing each group's typical movement -->
+        <div class="who-art"><svg id="who-fig" viewBox="0 0 192 108" role="img" aria-label="Animated line figure showing this group's typical movement with both sensors on the back. Drag to bend it."><g id="who-body"></g></svg></div>
+        <p class="who-hint" aria-hidden="true">Drag the figure to bend it yourself</p>
+
+        <div class="who-panel" role="tabpanel" id="panel-rehab" aria-labelledby="tab-rehab">
+          <p>Weeks of rehab happen at home, where nobody is watching how they bend. ArcSense applies the limit their surgeon or physical therapist set and gives the clinician a log to review at the next visit.</p>
+          <dl class="who-facts">
+            <div><dt>Limit set by</dt><dd>Surgeon or physical therapist</dd></div>
+            <div><dt>Mount</dt><dd>Adhesive skin patch</dd></div>
+            <div><dt>Clinician sees</dt><dd>Daily log of buzz events</dd></div>
+          </dl>
+        </div>
+        <div class="who-panel" role="tabpanel" id="panel-athlete" aria-labelledby="tab-athlete" hidden>
+          <p>Training loads go up fast after a back injury. The trainer sets a limit for each phase of the return, and a clean hip hinge under the bar stays quiet.</p>
+          <dl class="who-facts">
+            <div><dt>Limit set by</dt><dd>Trainer or physical therapist, per phase</dd></div>
+            <div><dt>Mount</dt><dd>Strap, for sweat and contact</dd></div>
+            <div><dt>Coach sees</dt><dd>Events per training session</dd></div>
+          </dl>
+        </div>
+        <div class="who-panel" role="tabpanel" id="panel-older" aria-labelledby="tab-older" hidden>
+          <p>Everyday lifting and reaching, with a gentle cue instead of an alarm so it never startles anyone mid-lift. A rounded-back lift gets a short buzz.</p>
+          <dl class="who-facts">
+            <div><dt>Limit set by</dt><dd>Their clinician</dd></div>
+            <div><dt>Mount</dt><dd>Skin patch or strap</dd></div>
+            <div><dt>Cue</dt><dd>Short vibration, never an alarm</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. COMPARISON ======================================================= -->
+<section class="compare" id="compare" aria-labelledby="compare-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">How it's different</p>
+      <h2 id="compare-title">Where ArcSense fits</h2>
+      <p class="section-lede">Other products measure the back well. ArcSense is built for the weeks between clinic visits, with a limit the clinician sets.</p>
+    </div>
+    <div class="table-scroll">
+      <table class="cmp">
+        <caption class="sr-only">Four questions compared across ArcSense and existing back-motion products</caption>
+        <thead>
+          <tr>
+            <td></td>
+            <th scope="col" class="us"><span class="p-name" translate="no">ArcSense</span><span class="p-kind">Home rehab wearable</span></th>
+            <th scope="col"><span class="p-name">dorsaVi ViMove</span><span class="p-kind">Clinic assessment</span></th>
+            <th scope="col"><span class="p-name">Lift sensors</span><span class="p-kind">Soter, Kinetic, StrongArm, Modjoul</span></th>
+            <th scope="col"><span class="p-name">Posture trainers</span><span class="p-kind">Upright Go</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Works at home, between clinic visits</th><td class="us"><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td><td><span class="mk tbd" title="Not yet verified">?<span class="sr-only"> Not yet verified</span></span></td><td><span class="mk no"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg><span class="sr-only">No</span></span></td><td><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td></tr>
+          <tr><th scope="row">Two sensors that tell a hip hinge from a rounded back</th><td class="us"><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td><td><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td><td><span class="mk tbd" title="Varies by product">~<span class="sr-only"> Varies by product</span></span></td><td><span class="mk no"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg><span class="sr-only">No</span></span></td></tr>
+          <tr><th scope="row">Limit set by the patient's clinician</th><td class="us"><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td><td><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td><td><span class="mk no"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg><span class="sr-only">No</span></span></td><td><span class="mk no"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg><span class="sr-only">No</span></span></td></tr>
+          <tr><th scope="row">Gentle vibration cue in the moment</th><td class="us"><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td><td><span class="mk tbd" title="Not yet verified">?<span class="sr-only"> Not yet verified</span></span></td><td><span class="mk tbd" title="Varies by product">~<span class="sr-only"> Varies by product</span></span></td><td><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span></td></tr>
+        </tbody>
+        <tfoot>
+          <tr><th scope="row">Regulatory status</th><td class="us">Research prototype</td><td>FDA cleared</td><td>Workplace safety tool</td><td>Consumer device</td></tr>
+        </tfoot>
+      </table>
+    </div>
+    <p class="cmp-key"><span><span class="mk yes"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M4 9.5 7.5 13 14 5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg><span class="sr-only">Yes</span></span> Yes</span><span><span class="mk no"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M5 9h8" stroke="currentColor" stroke-width="2" stroke-linecap="square"/></svg><span class="sr-only">No</span></span> No</span><span><span class="mk tbd" title="Varies by product">~<span class="sr-only"> Varies by product</span></span> Varies by product</span><span><span class="mk tbd" title="Not yet verified">?<span class="sr-only"> Not yet verified</span></span> Not yet verified</span></p>
+  </div>
+</section>
+
+</main>
+
+<!-- 8. FOOTER =========================================================== -->
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div class="foot-brand">
+      <span class="wordmark" translate="no">ArcSense</span>
+      <p>An FAU Wave 2026–27 project, aligned with the Bio-Innovate AI Lab at Florida Atlantic University.</p>
+    </div>
+    <p class="disclaimer"><strong>Research prototype.</strong> ArcSense is a coaching tool, not a medical device, and it is not FDA cleared. Every reading, chart and log on this page is simulated in your browser; none of it comes from a person or a real sensor. Hardware renders appear only once they come from the real CAD assembly.</p>
+  </div>
+</footer>
+
+<!-- Libraries (pinned versions). Lenis = smooth scroll, GSAP = motion. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<!-- Three.js loads only if assets/hardware/hub.glb exists (see hardware.js). -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script src="app.js?v=3"></script>
+<script type="module" src="hardware.js?v=4"></script>
+</body>
+</html>
